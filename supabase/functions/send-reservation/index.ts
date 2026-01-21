@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const WEBHOOK_URL = "https://n8n.growclientsai.com/webhook/5fcc6c2e-a08d-4967-b29f-2052264f367d/chat";
+const WEBHOOK_URL = "https://n8n.growclientsai.com/webhook/tastyc";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
