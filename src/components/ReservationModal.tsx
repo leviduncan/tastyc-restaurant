@@ -83,12 +83,17 @@ const ReservationModal = ({ isOpen, onClose }: ReservationModalProps) => {
     };
 
     try {
-      const { data, error } = await supabase.functions.invoke('send-reservation', {
+      const { data: responseData, error } = await supabase.functions.invoke('send-reservation', {
         body: payload,
       });
 
       if (error) {
         throw new Error(error.message || "Failed to submit reservation");
+      }
+
+      // Check if the edge function returned an error in the response body
+      if (responseData && responseData.success === false) {
+        throw new Error(responseData.error || "Failed to submit reservation");
       }
 
       setIsSuccess(true);
