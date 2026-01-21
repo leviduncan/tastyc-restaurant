@@ -35,8 +35,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { RESERVATION_WEBHOOK_URL } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const reservationSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -94,16 +94,12 @@ const ReservationModal = ({ isOpen, onClose }: ReservationModalProps) => {
     };
 
     try {
-      const response = await fetch(RESERVATION_WEBHOOK_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+      const { data, error } = await supabase.functions.invoke('send-reservation', {
+        body: payload,
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to submit reservation");
+      if (error) {
+        throw new Error(error.message || "Failed to submit reservation");
       }
 
       setIsSuccess(true);
