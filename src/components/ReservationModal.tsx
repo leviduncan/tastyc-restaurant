@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Popover,
   PopoverContent,
@@ -40,12 +39,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 const reservationSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
-  email: z.string().email("Please enter a valid email").max(255),
-  phone: z.string().min(10, "Please enter a valid phone number").max(20),
   date: z.date({ required_error: "Please select a date" }),
   time: z.string({ required_error: "Please select a time" }),
   guests: z.string({ required_error: "Please select number of guests" }),
-  message: z.string().max(500).optional(),
 });
 
 type ReservationFormData = z.infer<typeof reservationSchema>;
@@ -73,9 +69,6 @@ const ReservationModal = ({ isOpen, onClose }: ReservationModalProps) => {
     resolver: zodResolver(reservationSchema),
     defaultValues: {
       name: "",
-      email: "",
-      phone: "",
-      message: "",
     },
   });
 
@@ -83,14 +76,10 @@ const ReservationModal = ({ isOpen, onClose }: ReservationModalProps) => {
     setIsSubmitting(true);
 
     const payload = {
-      source: "website_form",
       name: data.name.trim(),
-      email: data.email.trim(),
-      phone: data.phone.trim(),
       date: format(data.date, "yyyy-MM-dd"),
       time: data.time,
       guests: data.guests,
-      message: data.message?.trim() || "",
     };
 
     try {
@@ -105,7 +94,7 @@ const ReservationModal = ({ isOpen, onClose }: ReservationModalProps) => {
       setIsSuccess(true);
       toast({
         title: "Reservation Submitted!",
-        description: "We'll confirm your booking shortly via email.",
+        description: "We'll confirm your booking shortly.",
       });
 
       setTimeout(() => {
@@ -166,7 +155,7 @@ const ReservationModal = ({ isOpen, onClose }: ReservationModalProps) => {
                 </div>
                 <h3 className="text-xl font-serif mb-2">Reservation Confirmed!</h3>
                 <p className="text-tastyc-text-light text-sm">
-                  Check your email for confirmation details.
+                  We look forward to seeing you!
                 </p>
               </div>
             ) : (
@@ -189,46 +178,6 @@ const ReservationModal = ({ isOpen, onClose }: ReservationModalProps) => {
                       </FormItem>
                     )}
                   />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-white/80">Email</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="email"
-                              placeholder="john@example.com"
-                              {...field}
-                              className="bg-white/5 border-white/10 text-white placeholder:text-white/40 focus:border-primary"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-white/80">Phone</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="tel"
-                              placeholder="+1 234 567 890"
-                              {...field}
-                              className="bg-white/5 border-white/10 text-white placeholder:text-white/40 focus:border-primary"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
 
                   <div className="grid grid-cols-3 gap-4">
                     <FormField
@@ -320,25 +269,6 @@ const ReservationModal = ({ isOpen, onClose }: ReservationModalProps) => {
                       )}
                     />
                   </div>
-
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-white/80">Special Requests (Optional)</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Any dietary requirements or special occasions?"
-                            {...field}
-                            className="bg-white/5 border-white/10 text-white placeholder:text-white/40 focus:border-primary resize-none"
-                            rows={3}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
 
                   <Button
                     type="submit"
