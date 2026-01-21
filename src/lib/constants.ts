@@ -1,5 +1,5 @@
 // Webhook URL for reservations
-export const RESERVATION_WEBHOOK_URL = "https://n8n.growclientsai.com/webhook-test/tastyc";
+export const RESERVATION_WEBHOOK_URL = "https://n8n.growclientsai.com/webhook/tastyc";
 
 // Restaurant Info
 export const RESTAURANT_INFO = {
